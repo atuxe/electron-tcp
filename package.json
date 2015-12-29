@@ -1,0 +1,26 @@
+{
+  "name": "electron-tcp",
+  "version": "1.0.0",
+  "description": "A TCP test tool base on Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atuxe/electron-tcp.git"
+  },
+  "keywords": [
+    "Electron",
+    "TCP"
+  ],
+  "author": "Atuxe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atuxe/electron-tcp/issues"
+  },
+  "homepage": "https://github.com/atuxe/electron-tcp#readme",
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.0"
+  }
+}
