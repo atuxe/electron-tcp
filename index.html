@@ -8,8 +8,8 @@
 </head>
 
 <body>
-    <h1>Electron TCP</h1>
     <div class="container">
+        <h1>Electron TCP</h1>
         <div class="sidebar">
             <fieldset>
                 <legend>Server Mode</legend>
@@ -29,13 +29,15 @@
         <div class="main">
             <fieldset>
                 <legend>Response</legend>
-                <input type="checkbox" name="is_hex" id="is_hex">
-                <label for="is_hex">Hex</label>
+                <input type="checkbox" name="is_hex1" id="is_hex1">
+                <label for="is_hex1">Hex</label>
                 <button type="button" id="btn_clean1">Clean</button>
                 <textarea name="response" id="response" rows="8"></textarea>
             </fieldset>
             <fieldset>
                 <legend>Send</legend>
+                <input type="checkbox" name="is_hex2" id="is_hex2">
+                <label for="is_hex2">Hex</label>
                 <button type="button" id="btn_send">Send</button>
                 <button type="button" id="btn_clean2">Clean</button>
                 <textarea name="send" id="send" rows="8"></textarea>
@@ -47,6 +49,8 @@
         var net = require('net');
         var server = null,
             socket = null;
+        const LISTEN_TEXT = 'Listen';
+        const CLOSE_TEXT = 'Close';
         util.log('Hello Electron TCP!');
 
         var $ = function (id) {
@@ -55,10 +59,13 @@
 
         $('btn_server_start').addEventListener('click', function(ev){
             var btn_text = $('btn_server_start').innerHTML;
-            $('btn_server_start').innerHTML = btn_text == 'Close' ? 'Listen' : 'Close';
-            if (btn_text == 'Close') {
+            if (btn_text == CLOSE_TEXT) {
+                $('btn_server_start').innerHTML = LISTEN_TEXT;
+                $('server_port').disabled = false;
                 server_stop();
             } else {
+                $('btn_server_start').innerHTML = CLOSE_TEXT;
+                $('server_port').disabled = true;
                 server_start();
             }
         });
@@ -67,7 +74,7 @@
             var server_port = $('server_port').value;
             server = net.createServer(function (socket) {
                 socket = socket;
-                util.log(socket.remoteAdress + 'connecting!');
+                util.log(socket.remoteAddress + ' is connecting!');
                 socket.on('data', function (data) {
                     var dataHex = data.toString('hex');
                     var dataString = data.toString('utf8');
