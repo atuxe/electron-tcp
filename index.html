@@ -76,6 +76,14 @@
             return utf8String;
         };
 
+        $('btn_clean1').addEventListener('click', function (event) {
+            $('response').value = '';
+        });
+
+        $('btn_clean2').addEventListener('click', function (event) {
+            $('send').value = '';
+        });
+
         $('btn_server_start').addEventListener('click', function(ev){
             var btn_text = $('btn_server_start').innerHTML;
             if (btn_text == CLOSE_TEXT) {
