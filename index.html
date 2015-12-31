@@ -88,11 +88,17 @@
             var btn_text = $('btn_server_start').innerHTML;
             if (btn_text == CLOSE_TEXT) {
                 $('btn_server_start').innerHTML = LISTEN_TEXT;
-                $('server_port').disabled = false;
+                var elements = document.querySelectorAll('#client_ip, #client_port, #btn_client_start, #server_port');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].disabled = false;
+                }
                 server_stop();
             } else {
                 $('btn_server_start').innerHTML = CLOSE_TEXT;
-                $('server_port').disabled = true;
+                var elements = document.querySelectorAll('#client_ip, #client_port, #btn_client_start, #server_port');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].disabled = true;
+                }
                 server_start();
             }
         });
@@ -101,8 +107,16 @@
             var btn_text = $('btn_client_start').innerHTML;
             if (btn_text == CONNECT_TEXT) {
                 $('btn_client_start').innerHTML = DISCONNECT_TEXT;
+                var elements = document.querySelectorAll('#client_ip, #client_port, #btn_server_start, #server_port');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].disabled = true;
+                }
                 client_connect();
             } else {
+                var elements = document.querySelectorAll('#client_ip, #client_port, #btn_server_start, #server_port');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].disabled = false;
+                }
                 $('btn_client_start').innerHTML = CONNECT_TEXT;
                 client_disconnect();
             }
