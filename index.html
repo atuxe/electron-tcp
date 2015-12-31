@@ -59,6 +59,23 @@
             return document.getElementById(id);
         }
 
+        String.prototype.toHex = function() {
+            var hexString = [];
+            for (var i = 0; i < this.length; i++) {
+                hexString.push(this.charCodeAt(i).toString(16));
+            }
+            return hexString.join(' ');
+        };
+
+        String.prototype.toUtf8 = function() {
+            var utf8String = '',
+                hexArr = this.split(' ');
+            for (var i = 0; i < hexArr.length; i++) {
+                utf8String += String.fromCharCode(parseInt(hexArr[i], 16));
+            }
+            return utf8String;
+        };
+
         $('btn_server_start').addEventListener('click', function(ev){
             var btn_text = $('btn_server_start').innerHTML;
             if (btn_text == CLOSE_TEXT) {
@@ -83,12 +100,23 @@
             }
         });
 
+        $('is_hex1').addEventListener('change', function (event) {
+            var that = this;
+            var checked = this.checked;
+            console.log('is_hex1:', checked);
+            if (checked) {
+                $('response').value = $('response').value.toHex();
+            } else {
+                $('response').value = $('response').value.toUtf8();
+            }
+        });
+
         function bind_event () {
             socket.on('data', function (data) {
                 var dataHex = data.toString('hex');
                 var dataString = data.toString('utf8');
                 util.log('get data:' + dataString);
-                $('response').innerHTML = dataString;
+                $('response').value += dataString;
             });
             $('btn_send').addEventListener('click', function (ev) {
                 var data = $('send').value;
@@ -132,6 +160,14 @@
             if (server !== null) {
                 server.close();
                 util.log('server close');
+            }
+        }
+
+        function send_hex (socket, command) {
+            command = command || '15 01 00 00 00 06 FF 03 00 00 00 08';
+            command = command.replace(/[\s]*/ig, '');
+            if (socket) {
+                socket.write(command, 'hex');
             }
         }
     </script>
