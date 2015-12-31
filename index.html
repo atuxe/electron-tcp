@@ -109,13 +109,20 @@
         });
 
         $('is_hex1').addEventListener('change', function (event) {
-            var that = this;
             var checked = this.checked;
-            console.log('is_hex1:', checked);
             if (checked) {
                 $('response').value = $('response').value.toHex();
             } else {
                 $('response').value = $('response').value.toUtf8();
+            }
+        });
+
+        $('is_hex2').addEventListener('change', function (event) {
+            var checked = this.checked;
+            if (checked) {
+                $('send').value = $('send').value.toHex();
+            } else {
+                $('send').value = $('send').value.toUtf8();
             }
         });
 
@@ -128,7 +135,12 @@
             });
             $('btn_send').addEventListener('click', function (ev) {
                 var data = $('send').value;
-                socket.write(data);
+                var is_hex = $('is_hex2').checked;
+                if (is_hex) {
+                    send_hex(socket, data);
+                } else {
+                    socket.write(data);
+                }
                 util.log('send data:' + data);
             });
         }
