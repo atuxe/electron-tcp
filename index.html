@@ -19,7 +19,7 @@
             </fieldset>
             <fieldset>
                 <legend>Client Mode</legend>
-                <input type="text" name="ip" value="127.0.0.1" placeholder="IP Address">
+                <input type="text" name="client_ip" id="client_ip" value="127.0.0.1" placeholder="IP Address">
                 <br>
                 <input type="text" name="client_port" id="client_port" value="5001" placeholder="Port">
                 <br>
@@ -51,6 +51,8 @@
             socket = null;
         const LISTEN_TEXT = 'Listen';
         const CLOSE_TEXT = 'Close';
+        const DISCONNECT_TEXT = 'Disconnect';
+        const CONNECT_TEXT = 'Connect';
         util.log('Hello Electron TCP!');
 
         var $ = function (id) {
@@ -70,22 +72,54 @@
             }
         });
 
+        $('btn_client_start').addEventListener('click', function (event) {
+            var btn_text = $('btn_client_start').innerHTML;
+            if (btn_text == CONNECT_TEXT) {
+                $('btn_client_start').innerHTML = DISCONNECT_TEXT;
+                client_connect();
+            } else {
+                $('btn_client_start').innerHTML = CONNECT_TEXT;
+                client_disconnect();
+            }
+        });
+
+        function bind_event () {
+            socket.on('data', function (data) {
+                var dataHex = data.toString('hex');
+                var dataString = data.toString('utf8');
+                util.log('get data:' + dataString);
+                $('response').innerHTML = dataString;
+            });
+            $('btn_send').addEventListener('click', function (ev) {
+                var data = $('send').value;
+                socket.write(data);
+                util.log('send data:' + data);
+            });
+        }
+
+        function client_connect() {
+            var client_port = $('client_port').value;
+            var client_ip = $('client_ip').value;
+            socket = net.connect(client_port, client_ip, function () {
+                bind_event();
+                util.log('connected to server ' + client_ip + ':' + client_port);
+            });
+
+        }
+
+        function client_disconnect () {
+            if (socket !== null) {
+                socket.end();
+                util.log('client disconnect');
+            }
+        }
+
         function server_start() {
             var server_port = $('server_port').value;
-            server = net.createServer(function (socket) {
-                socket = socket;
+            server = net.createServer(function (_socket) {
+                socket = _socket;
+                bind_event();
                 util.log(socket.remoteAddress + ' is connecting!');
-                socket.on('data', function (data) {
-                    var dataHex = data.toString('hex');
-                    var dataString = data.toString('utf8');
-                    util.log('get data:' + dataString);
-                    $('response').innerHTML = dataString;
-                });
-                $('btn_send').addEventListener('click', function (ev) {
-                    var data = $('send').value;
-                    socket.write(data);
-                    util.log('send data:' + data);
-                });
             }).listen(server_port);
             util.log('Socket server is running on ' + server_port);
         }
